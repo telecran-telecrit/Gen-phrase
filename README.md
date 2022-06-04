@@ -1,4 +1,4 @@
-# Generate a random pass phrase
+# Generate a random 5 word phrase from 3 files (dictionaries)
 
 ![Password Strength by xkcd](http://imgs.xkcd.com/comics/password_strength.png)
 
