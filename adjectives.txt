@@ -503,8 +503,6 @@ catadromous
 diadromous
 anabatic
 katabatic
-anal
-oral
 analogue
 digital
 analytic
@@ -1323,8 +1321,6 @@ prejudiced
 homophobic
 jaundiced
 loaded
-racist
-sexist
 unprejudiced
 broad
 catholic
@@ -4122,7 +4118,6 @@ estimable
 admirable
 contemptible
 abject
-bastardly
 pathetic
 ethical
 unethical
@@ -5501,7 +5496,6 @@ pederastic
 transgender
 transvestic
 tribadistic
-bisexual
 hierarchical
 gradable
 graded
@@ -6454,7 +6448,6 @@ morganatic
 illegitimate
 adulterine
 base
-bastardly
 fatherless
 unlawful
 leptorrhine
@@ -6813,12 +6806,7 @@ female
 female
 pistillate
 androgynous
-bisexual
 gynandromorphic
-hermaphroditic
-intersexual
-pseudohermaphroditic
-unisex
 manned
 unmanned
 pilotless
@@ -7613,7 +7601,6 @@ nonagenarian
 octogenarian
 oldish
 overage
-sexagenarian
 venerable
 young
 adolescent
@@ -7707,7 +7694,6 @@ sanguine
 pessimistic
 bearish
 demoralized
-oral
 buccal
 buccal
 aboral
@@ -8849,9 +8835,7 @@ virginal
 impure
 adulterate
 alloyed
-bastardized
 contaminated
-dirty
 unpurified
 contaminated
 uncontaminated
@@ -9900,7 +9884,6 @@ preconcerted
 unsettled
 doubtful
 open
-sexy
 aroused
 autoerotic
 coquettish
@@ -9913,23 +9896,6 @@ lascivious
 lecherous
 leering
 lubricious
-orgiastic
-oversexed
-pornographic
-provocative
-raunchy
-sexed
-unsexy
-sexless
-sexless
-undersexed
-sexual
-intersexual
-sexed
-unisexual
-asexual
-agamic
-fissiparous
 neuter
 vegetal
 castrated
@@ -14051,9 +14017,6 @@ continental
 lexical
 nonlexical
 lexical
-psychosexual
-sexagesimal
-sexual
 coital
 marine
 marine

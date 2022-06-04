@@ -2597,7 +2597,6 @@ superannuate
 ulcerate
 scramble
 unscramble
-unsex
 vitrify
 vitrify
 vulcanize
@@ -2762,7 +2761,6 @@ bind
 ligate
 disharmonize
 obsolesce
-sexualize
 schematize
 patent
 constitutionalize
@@ -3161,7 +3159,6 @@ label
 treat
 bristle
 label
-sex
 individualize
 distinguish
 identify
@@ -3906,7 +3903,6 @@ admit
 make_no_bones_about
 make_a_clean_breast_of
 superannuate
-bastardize
 sustain
 concede
 confess
@@ -4525,7 +4521,6 @@ disambiguate
 define
 redefine
 repeat
-cuckoo
 reecho
 parrot
 repeat
@@ -5657,9 +5652,6 @@ wean
 bottlefeed
 suckle
 starve
-starve
-starve
-starve
 be_full
 crave
 want
@@ -5904,8 +5896,6 @@ board_up
 knead
 proof
 masticate
-butt
-headbutt
 hit
 ping
 spang
@@ -6396,11 +6386,8 @@ poison
 stone
 poison
 kill
-commit_suicide
 dispatch
 zap
-kill
-kill
 strike_down
 sacrifice
 take_off
@@ -7290,7 +7277,6 @@ repose
 sign
 middle
 parallelize
-butt
 recess
 reposition
 reduce
@@ -9523,7 +9509,6 @@ refer
 recommit
 redirect
 sublimate
-desexualize
 transport
 truck
 rail
@@ -11308,7 +11293,6 @@ dispossess
 clean_out
 unclothe
 deplume
-unsex
 orphan
 bereave
 inherit
@@ -12545,7 +12529,6 @@ infect
 lead_off
 whore
 poison
-bastardize
 blackmail
 suborn
 prosecute
