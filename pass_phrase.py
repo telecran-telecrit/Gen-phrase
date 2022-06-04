@@ -178,7 +178,7 @@ def generate_wordlist(wordfile=None,
 
     for line in wlf:
         thisword = line.strip()
-        if thisword.find("_") >= 0:
+        if thisword.find("_") >= 0 or thisword.lower() != thisword:
             continue
         if regexp.match(thisword) is not None:
             if make_mini_leet:
