@@ -9,7 +9,7 @@
 
 var os = require('os');
 var path = require('path');
-var sys = require('sys');
+var sys = require('util');
 var fs = require('fs');
 var optparse = require('optparse');
 var random = Math.random;
@@ -59,7 +59,7 @@ rng = {};
     rng = random.SystemRandom;
 } catch(e) {
     if ((e instanceof Error)) {
-        sys.stderr.write("WARNING: System does not support cryptographically secure random number generator or you are using Python version < 2.4.\nContinuing with less-secure generator.\n");
+        console.error("WARNING: System does not support cryptographically secure random number generator or you are using Python version < 2.4.\nContinuing with less-secure generator.\n");
         rng = random.Random;
     } else {
         throw e;
@@ -74,6 +74,17 @@ rng.randint = function (min, max) {
    return Math.round((Math.random() * Math.abs(max - min)) + min);
 };
 
+rng.choice = function (items) {
+    return items[Math.floor(Math.random() * items.length)];
+};
+
+function divmod (x, y) {
+    //x = Math.round(x);
+    //y = Math.round(y);
+    //console.debug("x: ", x);
+    //console.debug("y: ", y);
+    return [x/y, x%y];
+}
 
 function validate_options(options, args) {
     /*
@@ -81,23 +92,23 @@ function validate_options(options, args) {
     */
     var common_word_file_locations, wordfile;
     if ((options.num <= 0)) {
-        sys.stderr.write("Little point running the script if you don't generate even a single passphrase.\n");
+        console.error("Little point running the script if you don't generate even a single passphrase.\n");
         process.exit(1);
     }
     if ((options.max_length < options.min_length)) {
-        sys.stderr.write("The maximum length of a word can not be lesser then minimum length.\nCheck the specified settings.\n");
+        console.error("The maximum length of a word can not be lesser then minimum length.\nCheck the specified settings.\n");
         process.exit(1);
     }
-    if ((args.length >= 1)) {
-        console.error("Too many arguments.");
-        process.exit(5);
-    }
+///    if ((args.length >= 1)) {
+///        console.error("Too many arguments.");
+///        process.exit(5);
+///    }
     for (var word_type, _pj_c = 0, _pj_a = ["adjectives", "nouns", "verbs"], _pj_b = _pj_a.length; (_pj_c < _pj_b); _pj_c += 1) {
         word_type = _pj_a[_pj_c];
         wordfile = (options[word_type] || null);
         if ((wordfile !== null)) {
             if ((! fs.existsSync(os.path.abspath(wordfile)))) {
-                sys.stderr.write("Could not open the specified {0} word file.\n".format(word_type));
+                console.error("Could not open the specified {0} word file.\n".format(word_type));
                 process.exit(1);
             }
         } else {
@@ -105,7 +116,7 @@ function validate_options(options, args) {
             for (var loc, _pj_f = 0, _pj_d = common_word_file_locations, _pj_e = _pj_d.length; (_pj_f < _pj_e); _pj_f += 1) {
                 loc = _pj_d[_pj_f];
                 wordfile = loc.format(word_type);
-                console.debug('wordfile ', wordfile);
+                //console.debug('wordfile ', wordfile);
                 if (fs.existsSync(wordfile)) {
                     options[word_type] = wordfile;
                     break;
@@ -126,17 +137,17 @@ function leet(word) {
         letter = _pj_a[_pj_c];
         l = letter.lower();
         if (_pj.in_es6(l, geek_letters)) {
-            if (((rng().randint(1, 5) % 5) !== 0)) {
-                letter = rng().choice(geek_letters[l]);
+            if (((rng.randint(1, 5) % 5) !== 0)) {
+                letter = rng.choice(geek_letters[l]);
             }
         } else {
-            if (((rng().randint(1, 10) % 10) !== 0)) {
+            if (((rng.randint(1, 10) % 10) !== 0)) {
                 letter = letter.upper();
             }
         }
         geek_word += letter;
     }
-    if (((word.slice((- 1)).lower() === "s") && ((rng().randint(1, 2) % 2) === 0))) {
+    if (((word.slice((- 1)).lower() === "s") && ((rng.randint(1, 2) % 2) === 0))) {
         geek_word = (geek_word.slice(0, (- 1)) + "zz");
     }
     return geek_word;
@@ -162,17 +173,20 @@ function generate_wordlist(wordfile = null, min_length = 0, max_length = 20, val
     */
     var regexp, thisword, wlf, words;
     words = [];
-    regexp = new re(("^%s{%i,%i}$" % [valid_chars, min_length, max_length]));
+    ///regexp = new re(("^%s{%i,%i}$" % [valid_chars, min_length, max_length]));
+    regexp = new re(("^"+valid_chars+"{"+min_length+","+max_length+"}$"));
     wordfile = os.path.expanduser(wordfile);
-    console.log('wordfile: ', wordfile);
-    /*wlf = open(wordfile);
-    for (var line, _pj_c = 0, _pj_a = wlf, _pj_b = _pj_a.length; (_pj_c < _pj_b); _pj_c += 1) {
-        line = _pj_a[_pj_c];
-        thisword = line.strip();
-        if (((thisword.find("_") >= 0) || (thisword.lower() !== thisword))) {
+    //console.debug('wordfile: ', wordfile);
+    
+    var array0 = fs.readFileSync(wordfile).toString().split("\n");
+    
+    for (var line of array0) {
+        thisword = line.trim();
+        if (((thisword.indexOf("_") >= 0) || (thisword.toLowerCase() !== thisword))) {
             continue;
         }
-        if ((regexp.match(thisword) !== null)) {
+        ///words.push(thisword);
+        if ((thisword.match(regexp) != null)) {
             if (make_mini_leet) {
                 thisword = mini_leet(thisword);
             } else {
@@ -180,20 +194,21 @@ function generate_wordlist(wordfile = null, min_length = 0, max_length = 20, val
                     thisword = leet(thisword);
                 }
             }
-            words.append(thisword);
+            words.push(thisword);
         }
     }
-    wlf.close();
+    /*wlf.close();*/
     if ((words.length < 1)) {
-        sys.stderr.write("Could not get enough words!\n");
-        sys.stderr.write("This could be a result of either {0} being too small,\n".format(wordfile));
-        sys.stderr.write("or your settings too strict.\n");
+        console.error("Could not get enough words!\n");
+        console.error("This could be a result of either {0} being too small,\n".format(wordfile));
+        console.error("or your settings too strict.\n");
         process.exit(1);
-    }*/
+    }
     return words;
 }
 function craking_time(seconds) {
     var day, days, hour, hours, minute, months, r, week, weeks, years;
+    console.debug('seconds: ', seconds);
     minute = 60;
     hour = (minute * 60);
     day = (hour * 24);
@@ -212,22 +227,22 @@ function craking_time(seconds) {
                 } else {
                     if ((seconds < ((60 * 60) * 24))) {
                         [hours, r] = divmod(seconds, (60 * 60));
-                        return ("about %i hours" % hours);
+                        return ("about {} hours".format(hours));
                     } else {
                         if ((seconds < (((60 * 60) * 24) * 14))) {
                             [days, r] = divmod(seconds, ((60 * 60) * 24));
-                            return ("about %i days" % days);
+                            return ("about {} days".format(days));
                         } else {
                             if ((seconds < ((((60 * 60) * 24) * 7) * 8))) {
                                 [weeks, r] = divmod(seconds, (((60 * 60) * 24) * 7));
-                                return ("about %i weeks" % weeks);
+                                return ("about {} weeks".format(weeks));
                             } else {
                                 if ((seconds < ((((60 * 60) * 24) * 365) * 2))) {
                                     [months, r] = divmod(seconds, ((((60 * 60) * 24) * 7) * 4));
-                                    return ("about %i months" % months);
+                                    return ("about {} months".format(months));
                                 } else {
                                     [years, r] = divmod(seconds, (((60 * 60) * 24) * 365));
-                                    return ("about %i years" % years);
+                                    return ("about {} years".format(years));
                                 }
                             }
                         }
@@ -242,29 +257,30 @@ function verbose_reports(kwargs = {}) {
     Report entropy metrics based on word list size"
     */
     var combinations, entropy, f, time_taken, words;
-    options = kwargs.pop("options");
+    options = kwargs["options"];
+    delete kwargs["options"];
     f = {};
     for (var word_type, _pj_c = 0, _pj_a = ["adjectives", "nouns", "verbs"], _pj_b = _pj_a.length; (_pj_c < _pj_b); _pj_c += 1) {
         word_type = _pj_a[_pj_c];
-        console.log("The supplied {word_type} list is located at {loc}.".format({"word_type": word_type, "loc": os.path.abspath(options[word_type])}));
+        console.log("The supplied {word_type} list is located at {loc}.".format({"word_type": word_type, "loc": /*os.path.abspath(*/options[word_type]/*)*/}));
         words = kwargs[word_type];
         f[word_type] = {};
         f[word_type]["length"] = words.length;
-        f[word_type]["bits"] = math.log(f[word_type]["length"], 2);
+        f[word_type]["bits"] = Math.log(f[word_type]["length"], 2);
         if ((Number.parseInt(f[word_type]["bits"]) === f[word_type]["bits"])) {
-            console.log(("Your %s word list contains %i words, or 2^%i words." % [word_type, f[word_type]["length"], f[word_type]["bits"]]));
+            console.log(("Your {} word list contains {} words, or 2^{} words." .format (word_type, f[word_type]["length"], Math.round(f[word_type]["bits"]))));
         } else {
-            console.log(("Your %s word list contains %i words, or 2^%0.2f words." % [word_type, f[word_type]["length"], f[word_type]["bits"]]));
+            console.log(("Your {} word list contains {} words, or 2^{} words." .format (word_type, f[word_type]["length"], f[word_type]["bits"])));
         }
     }
     entropy = ((((f["adjectives"]["bits"] + f["nouns"]["bits"]) + f["verbs"]["bits"]) + f["adjectives"]["bits"]) + f["nouns"]["bits"]);
-    console.log(("A passphrase from this list will have roughly %i (%0.2f + %0.2f + %0.2f + %0.2f + %0.2f) bits of entropy, " % [entropy, f["adjectives"]["bits"], f["nouns"]["bits"], f["verbs"]["bits"], f["adjectives"]["bits"], f["nouns"]["bits"]]));
-    combinations = (math.pow(2, Number.parseInt(entropy)) / 1000);
+    //console.log(("A passphrase from this list will have roughly %i (%0.2f + %0.2f + %0.2f + %0.2f + %0.2f) bits of entropy, " % [entropy, f["adjectives"]["bits"], f["nouns"]["bits"], f["verbs"]["bits"], f["adjectives"]["bits"], f["nouns"]["bits"]]));
+    combinations = (Math.pow(2, Number.parseInt(entropy)) / 1000);
     time_taken = craking_time(combinations);
-    console.log(("Estimated time to crack this passphrase (at 1,000 guesses per second): %s\n" % time_taken));
+    console.log(("Estimated time to crack this passphrase (at 1,000 guesses per second): {}\n" .format (time_taken)));
 }
 function generate_passphrase(adjectives, nouns, verbs, separator) {
-    return "{0}{s}{1}{s}{2}{s}{3}{s}{4}".format(rng().choice(adjectives), rng().choice(nouns), rng().choice(verbs), rng().choice(adjectives), rng().choice(nouns), {"s": separator});
+    return "{0}{5}{1}{5}{2}{5}{3}{5}{4}".format(rng.choice(adjectives), rng.choice(nouns), rng.choice(verbs), rng.choice(adjectives), rng.choice(nouns), separator);
 }
 function passphrase(adjectives, nouns, verbs, separator, num = 1, uppercase = false, lowercase = false, capitalise = false) {
     /*
@@ -274,6 +290,7 @@ function passphrase(adjectives, nouns, verbs, separator, num = 1, uppercase = fa
     I find this basic structure easier to
     remember than XKCD style purely random words
     */
+    //console.debug('!passphrase: ', adjectives.length, nouns.length, verbs.length, separator, num, uppercase, lowercase, capitalise);
     var all_phrases, phrase, phrases;
     phrases = [];
     for (var i = 0, _pj_a = num; (i < _pj_a); i += 1) {
@@ -281,8 +298,9 @@ function passphrase(adjectives, nouns, verbs, separator, num = 1, uppercase = fa
         if (capitalise) {
             phrase = string.capwords(phrase);
         }
-        phrases.append(phrase);
+        phrases.push(phrase);
     }
+    
     all_phrases = phrases.join("\n");
     if (uppercase) {
         all_phrases = all_phrases.upper();
@@ -313,22 +331,32 @@ function passphrase(adjectives, nouns, verbs, separator, num = 1, uppercase = fa
         ["--l337ish", {"dest": "make_mini_leet", "default": false, "action": "store_true", "help": "A l337 version which is easier to remember."}],
         ["-V", "--verbose", {"dest": "verbose", "default": false, "action": "store_true", "help": "Report various metrics for given options"}],
     ]
-    parser = new optparse.OptionParser(rules);
+    parser = new optparse.OptionParser(rules); // BROKEN
     ///[options, args] = parser.parse_args();
     options = parser.options();
     args = process.argv.slice(2);
     
-    console.debug('options: ', options);
-    console.debug('args: ', args);
-    
     validate_options(options, args);
+    
+    //console.debug('options: ', options);
+    //console.debug('args: ', args);
+    
     adjectives = generate_wordlist(...Object.values({"wordfile": options.adjectives, "min_length": options.min_length, "max_length": options.max_length, "valid_chars": options.valid_chars, "make_mini_leet": options.make_mini_leet, "make_leet": options.make_leet}));
     nouns = generate_wordlist(...Object.values({"wordfile": options.nouns, "min_length": options.min_length, "max_length": options.max_length, "valid_chars": options.valid_chars, "make_mini_leet": options.make_mini_leet, "make_leet": options.make_leet}));
     verbs = generate_wordlist(...Object.values({"wordfile": options.verbs, "min_length": options.min_length, "max_length": options.max_length, "valid_chars": options.valid_chars, "make_mini_leet": options.make_mini_leet, "make_leet": options.make_leet}));
+    
+    options.num = 1; // BECAUSE PRSER IS BROKEN
+    options.min_length = 0;
+    options.max_length = 20;
+    options.separator = ' ';
+    options.verbose = false;
+    
     if (options.verbose) {
         verbose_reports({"adjectives": adjectives, "nouns": nouns, "verbs": verbs, "options": options});
     }
-    console.log(passphrase(adjectives, nouns, verbs, options.separator, {"num": Number.parseInt(options.num), "uppercase": options.uppercase, "lowercase": options.lowercase, "capitalise": options.capitalise}));
+    
+    
+    console.log(passphrase(adjectives, nouns, verbs, options.separator, Number.parseInt(options.num), options.uppercase, options.lowercase, options.capitalise));
 /*}*/
 
 
