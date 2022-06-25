@@ -275,7 +275,7 @@ def verbose_reports(**kwargs):
     combinations = math.pow(2, int(entropy)) / 1000
     time_taken = craking_time(combinations)
     
-    print "Estimated time to crack this passphrase (at 1,000 guesses per second): %s\n" % time_taken
+    print ("Estimated time to crack this passphrase (at 1,000 guesses per second): %s\n" % time_taken)
 
 def generate_passphrase(adjectives, nouns, verbs, separator):
     return "{0}{s}{1}{s}{2}{s}{3}{s}{4}".format(
